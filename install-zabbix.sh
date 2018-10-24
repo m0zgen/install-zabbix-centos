@@ -31,17 +31,6 @@ yum-config-manager --enable remi-php72
 # Install and configure Mariadb
 # ---------------------------------------------------\
 yum install mariadb mariadb-server -y
-systemctl enable mariadb && systemctl start mariadb
-
-# mysql_secure_installation analog
-mysql --user=root <<_EOF_
-  UPDATE mysql.user SET Password=PASSWORD('${DB_ROOT_PASS}') WHERE User='root';
-  DELETE FROM mysql.user WHERE User='';
-  DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-  DROP DATABASE IF EXISTS test;
-  DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
-  FLUSH PRIVILEGES;
-_EOF_
 
 # my.cnf additional settings for InnoDB log rotate
 touch /etc/my.cnf.d/innolog.conf
@@ -64,6 +53,19 @@ innodb_flush_log_at_trx_commit = 2
 innodb_flush_method = O_DIRECT
 #
 #wsrep_provider_options="gcache.size=128M"
+_EOF_
+
+# Enable and start MariaDB
+systemctl enable mariadb && systemctl start mariadb
+
+# mysql_secure_installation analog
+mysql --user=root <<_EOF_
+  UPDATE mysql.user SET Password=PASSWORD('${DB_ROOT_PASS}') WHERE User='root';
+  DELETE FROM mysql.user WHERE User='';
+  DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+  DROP DATABASE IF EXISTS test;
+  DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+  FLUSH PRIVILEGES;
 _EOF_
 
 # Create zabbix databse and user
@@ -94,15 +96,22 @@ sed -i 's/^\(upload_max_filesize\).*/\1 = 2M/' /etc/php.ini
 sed -i 's/^\(max_input_time\).*/\1 = 300/' /etc/php.ini
 sed -i "s/^\;date.timezone.*/date.timezone = \'"$TIMEZONE_REGION"\/"$TIMEZONE_CITY"\'/" /etc/php.ini
 
-# Enable and start zabbix, httpd services
-systemctl enable zabbix-server && systemctl start zabbix-server
-systemctl enable httpd && systemctl start httpd
+# Configure local zabbix agent
+sed -i "s/^\(Server=\).*/\1"127.0.0.1,localhost,$SERVER_IP"/" /etc/zabbix/zabbix_agentd.conf
+sed -i "s/^\(ServerActive\).*/\1="$SERVER_IP"/" /etc/zabbix/zabbix_agentd.conf
+sed -i "s/^\(Hostname\).*/\1="$SERVER_NAME"/" /etc/zabbix/zabbix_agentd.conf
 
 # Configure firewalld
 # ---------------------------------------------------\
 firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-port=10051/tcp
 firewall-cmd --reload
+
+# Enable and start zabbix, httpd services
+systemctl enable zabbix-server && systemctl start zabbix-server
+systemctl enable httpd && systemctl start httpd
+systemctl enable zabbix-agent && systemctl start zabbix-agent
 
 # Final message
 # ---------------------------------------------------\
-echo "Now you can install and configure Zabbix. Link to Zebbix server - $SERVER_IP/zabbix"
+echo -e "\nNow you can install and configure Zabbix!\n\nLink to Zebbix server - http://$SERVER_IP/zabbix\nDB Password - $DB_ZAB_PASS\nDefault login - Admin\nDefault password - zabbix\n"
