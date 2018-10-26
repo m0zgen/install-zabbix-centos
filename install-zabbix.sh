@@ -16,7 +16,7 @@ SERVER_NAME=$(hostname)
 DB_ZAB_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 DB_ROOT_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 
-# Install base software && Add new repos
+# Install base software && Add new repos (for selinux troubleshoot you can install setroubleshoot)
 # ---------------------------------------------------\
 yum install epel-release yum-utils net-tools nano policycoreutils-python -y
 
