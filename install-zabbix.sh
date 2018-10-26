@@ -118,7 +118,6 @@ semodule -i my-zabbixserver.pp
 setsebool -P httpd_can_network_connect 1
 setsebool -P zabbix_can_network=1
 
-
 /sbin/restorecon -v /etc/ld.so.cache
 ausearch -c 'audispd' --raw | audit2allow -M my-audispd
 semodule -i my-audispd.pp
