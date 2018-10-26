@@ -109,7 +109,17 @@ firewall-cmd --reload
 
 # Configure SELinux
 # ---------------------------------------------------\
+ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver
+semodule -i my-zabbixserver.pp
 
+setsebool -P httpd_can_network_connect 1
+setsebool -P zabbix_can_network=1
+
+
+/sbin/restorecon -v /etc/ld.so.cache
+ausearch -c 'audispd' --raw | audit2allow -M my-audispd
+semodule -i my-audispd.pp
+setsebool -P daemons_enable_cluster_mode 1
 
 
 
