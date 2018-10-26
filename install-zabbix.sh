@@ -112,6 +112,9 @@ firewall-cmd --reload
 ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver
 semodule -i my-zabbixserver.pp
 
+# grep zabbix_t /var/log/audit/audit.log | audit2allow -M zabbix_server_custom
+# semodule -i zabbix_server_custom.pp
+
 setsebool -P httpd_can_network_connect 1
 setsebool -P zabbix_can_network=1
 
