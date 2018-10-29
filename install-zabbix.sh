@@ -21,7 +21,7 @@ DB_ROOT_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 yum install epel-release yum-utils net-tools nano policycoreutils-python wget -y
 
 # Troubleshoot tools
-yum install telnet setroubleshoot -y
+# yum install telnet setroubleshoot -y
 
 # Zabbix repo
 rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
@@ -125,6 +125,7 @@ firewall-cmd --reload
 # setsebool -P daemons_enable_cluster_mode 1
 
 # https://support.zabbix.com/browse/ZBX-12567
+# https://www.zabbix.com/forum/zabbix-suggestions-and-feedback/51642-zabbix-3-4-documentation-selinux
 cd $SCRIPT_PATH
 checkmodule -M -m -o zabbix_server_add.mod zabbix_server_add.te
 semodule_package  -m zabbix_server_add.mod -o zabbix_server_add.pp
@@ -142,5 +143,5 @@ systemctl enable zabbix-agent && systemctl start zabbix-agent
 # ---------------------------------------------------\
 echo -e "\nNow you can install and configure Zabbix!\n\nLink to Zabbix server - http://$SERVER_IP/zabbix\nDB Password - $DB_ZAB_PASS\nDefault login - Admin\nDefault password - zabbix\n"
 echo -e "\nMariaDB root password - $DB_ROOT_PASS\n"
-echo -e "Zabbix:\nDBUser: zabbix\nDBPass: $DB_ZAB_PASS\nLink to Zabbix server - http://$SERVER_IP/zabbix\n\nMariaDB\nRoot pass: $DB_ROOT_PASS" > $SCRIPT_PATH/zabbix-creds.txt
+echo -e "Zabbix:\nDBUser: zabbix\nDBPass: $DB_ZAB_PASS\nLink to Zabbix server - http://$SERVER_IP/zabbix\n\nMariaDB\nROOTPass: $DB_ROOT_PASS" > $SCRIPT_PATH/zabbix-creds.txt
 echo -e "\nCredential data saved to - $SCRIPT_PATH\zabbix-creds.txt"
