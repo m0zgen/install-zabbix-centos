@@ -112,21 +112,26 @@ firewall-cmd --reload
 
 # Configure SELinux
 # ---------------------------------------------------\
-ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver
-semodule -i my-zabbixserver.pp
+# ausearch -c 'zabbix_server' --raw | audit2allow -M my-zabbixserver
+# semodule -i my-zabbixserver.pp
 
 # grep zabbix_t /var/log/audit/audit.log | audit2allow -M zabbix_server_custom
 # semodule -i zabbix_server_custom.pp
 
+
+# /sbin/restorecon -v /etc/ld.so.cache
+# ausearch -c 'audispd' --raw | audit2allow -M my-audispd
+# semodule -i my-audispd.pp
+# setsebool -P daemons_enable_cluster_mode 1
+
+# https://support.zabbix.com/browse/ZBX-12567
+cd $SCRIPT_PATH
+checkmodule -M -m -o zabbix_server_add.mod zabbix_server_add.te
+semodule_package  -m zabbix_server_add.mod -o zabbix_server_add.pp
+semodule -i zabbix_server_add.pp 
+
 setsebool -P httpd_can_network_connect 1
 setsebool -P zabbix_can_network=1
-
-/sbin/restorecon -v /etc/ld.so.cache
-ausearch -c 'audispd' --raw | audit2allow -M my-audispd
-semodule -i my-audispd.pp
-setsebool -P daemons_enable_cluster_mode 1
-
-
 
 # Enable and start zabbix, httpd services
 systemctl enable zabbix-server && systemctl start zabbix-server
