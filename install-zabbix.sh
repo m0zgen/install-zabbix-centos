@@ -20,6 +20,9 @@ DB_ROOT_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 # ---------------------------------------------------\
 yum install epel-release yum-utils net-tools nano policycoreutils-python wget -y
 
+# Install additional tools
+yum install bind-utils nmap -y
+
 # Troubleshoot tools
 # yum install telnet setroubleshoot -y
 
@@ -108,6 +111,7 @@ sed -i "s/^\(Hostname\).*/\1="$SERVER_NAME"/" /etc/zabbix/zabbix_agentd.conf
 # ---------------------------------------------------\
 firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-port=10051/tcp
+firewall-cmd --permanent --add-port=10050/tcp
 firewall-cmd --reload
 
 # Configure SELinux
