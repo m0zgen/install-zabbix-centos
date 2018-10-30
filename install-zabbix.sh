@@ -86,7 +86,9 @@ EOF
 yum install zabbix-server-mysql zabbix-web-mysql zabbix-agent httpd -y
 
 # Import zabbix default db to zabbix database
-zcat /usr/share/doc/zabbix-server-mysql-4.0.0/create.sql.gz | mysql -uroot -p$DB_ROOT_PASS zabbix
+ZABB_MYSQL_VERSION=$(zabbix_server_mysql --version | head -1 | awk '{print $3}')
+
+zcat /usr/share/doc/zabbix-server-mysql-$ZABB_MYSQL_VERSION/create.sql.gz | mysql -uroot -p$DB_ROOT_PASS zabbix
 
 # Configure zabbix
 sed -i 's/# DBHost=.*/DBHost=localhost/' /etc/zabbix/zabbix_server.conf
