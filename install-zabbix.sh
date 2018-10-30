@@ -21,7 +21,7 @@ DB_ROOT_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 yum install epel-release yum-utils net-tools nano policycoreutils-python wget -y
 
 # Install additional tools
-yum install bind-utils nmap -y
+yum install bind-utils nmap htop -y
 
 # Troubleshoot tools
 # yum install telnet setroubleshoot -y
