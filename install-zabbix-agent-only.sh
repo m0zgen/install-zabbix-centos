@@ -40,6 +40,7 @@ isRoot
 # ---------------------------------------------------\
 SERVER_IP=$1
 HOST_NAME=$(hostname)
+HOST_IP=$(hostname -I | cut -d' ' -f1)
 
 if [ -z "$1" ]; then
     Error "\nPlease call '$0 <Zabbix Server IP>' to run this command!\n"
@@ -73,3 +74,6 @@ systemctl enable zabbix-agent && systemctl start zabbix-agent
 # Final
 # ---------------------------------------------------\
 Info "Done!"
+Info "Now, you must add this host to your Zabbix server in the Configuration > Hosts area"
+Info "This server ip - $HOST_IP"
+Info "This server name - $HOST_NAME"
