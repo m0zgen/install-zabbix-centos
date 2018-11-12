@@ -8,6 +8,7 @@ Fully automated bash script for install Zabbix server and agent on the CentOS ho
 * Configure zabbix config
 * Configure SELinux
 * Configure Firewalld
+* Secure zabbix agent
 
 ### Zabbix updater
 On source server:

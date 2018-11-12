@@ -101,7 +101,7 @@ if echo "$answer" | grep -iq "^y" ;then
         systemctl restart zabbix-agent
 
         Info "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
-        Info -e "PSKIdentity - $PSKIdentity"
+        Info "PSKIdentity - $PSKIdentity"
 
 
 else
