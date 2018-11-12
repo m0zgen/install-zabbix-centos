@@ -132,13 +132,15 @@ firewall-cmd --reload
 
 # https://support.zabbix.com/browse/ZBX-12567
 # https://www.zabbix.com/forum/zabbix-suggestions-and-feedback/51642-zabbix-3-4-documentation-selinux
-cd $SCRIPT_PATH
+cd $SCRIPT_PATH/setemplate
 checkmodule -M -m -o zabbix_server_add.mod zabbix_server_add.te
 semodule_package  -m zabbix_server_add.mod -o zabbix_server_add.pp
-semodule -i zabbix_server_add.pp 
+semodule -i zabbix_server_add.pp
 
 setsebool -P httpd_can_network_connect 1
 setsebool -P zabbix_can_network=1
+
+cd ../
 
 # Enable and start zabbix, httpd services
 systemctl enable zabbix-server && systemctl start zabbix-server
