@@ -45,7 +45,7 @@ HOST_IP=$(hostname -I | cut -d' ' -f1)
 # Secure agent
 PSKIdentity=${HOST_NAME%.*.*}
 TLSType="psk"
-RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
+RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)"
 
 if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
 	echo "Zabbix agent already installed!"
