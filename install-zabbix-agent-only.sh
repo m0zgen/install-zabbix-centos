@@ -42,6 +42,12 @@ SERVER_IP=$1
 HOST_NAME=$(hostname)
 HOST_IP=$(hostname -I | cut -d' ' -f1)
 
+if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
+	echo "Zabbix agent already installed!"
+	exit 1
+fi
+
+
 if [ -z "$1" ]; then
     Error "\nPlease call '$0 <Zabbix Server IP>' to run this command!\n"
     exit 1
@@ -70,6 +76,35 @@ firewall-cmd --reload
 # Enable and start agent
 # ---------------------------------------------------\
 systemctl enable zabbix-agent && systemctl start zabbix-agent
+
+# PSK
+echo -en "Secure agent? (y/n)? "
+read answer
+if echo "$answer" | grep -iq "^y" ;then
+	echo "Generate PSK..."
+	
+	TLSType="psk"
+	PSKFile="/etc/zabbix/zabbix_agentd.psk"
+	PSKIdentity=${$HOST_NAME%.*.*}-psk
+	
+	sh -c "openssl rand -hex 32 > $PSKFile"
+
+	sed -i "s/^\(TLSConnect=\).*/\1"$TLSType"/" /etc/zabbix/zabbix_agentd.conf
+	sed -i "s/^\(TLSAccept\).*/\1="$TLSType"/" /etc/zabbix/zabbix_agentd.conf
+	sed -i "s/^\(TLSPSKFile\).*/\1="$PSKFile"/" /etc/zabbix/zabbix_agentd.conf
+	sed -i "s/^\(TLSPSKIdentity\).*/\1="$PSKIdentity"/" /etc/zabbix/zabbix_agentd.conf
+
+	systemctl restart zabbix-agent
+
+	echo -e "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
+	echo -e "PSKIdentity - $PSKIdentity"
+
+
+else
+	echo -e "Ok, you agent is will be insecure..."
+fi
+
+
 
 # Final
 # ---------------------------------------------------\
