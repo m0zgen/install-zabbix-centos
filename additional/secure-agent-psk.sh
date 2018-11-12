@@ -47,5 +47,6 @@ else
       echo -e "Ok."
 fi
 
+Info "Done!"
 
 exit

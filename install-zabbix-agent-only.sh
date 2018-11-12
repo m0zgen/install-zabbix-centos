@@ -109,7 +109,17 @@ else
       echo -e "Ok, you agent is will be insecure..."
 fi
 
+# Active agent (EnableRemoteCommands)
+echo -en "Enable active agent feature? (y/n)? "
+read answer
+if echo "$answer" | grep -iq "^y" ;then
+    echo "Enable active agent..."
 
+    sed -i 's/# EnableRemoteCommands=.*/EnableRemoteCommands=1/' /etc/zabbix/zabbix_agentd.conf
+
+else
+      echo -e "Ok."
+fi
 
 # Final
 # ---------------------------------------------------\
