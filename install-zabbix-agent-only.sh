@@ -100,8 +100,8 @@ if echo "$answer" | grep -iq "^y" ;then
 
         systemctl restart zabbix-agent
 
-        echo -e "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
-        echo -e "PSKIdentity - $PSKIdentity"
+        Info "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
+        Info -e "PSKIdentity - $PSKIdentity"
 
 
 else
@@ -110,6 +110,7 @@ fi
 
 # Final
 # ---------------------------------------------------\
+echo -e ""
 Info "Done!"
 Info "Now, you must add this host to your Zabbix server in the Configuration > Hosts area"
 Info "This server ip - $HOST_IP"
