@@ -27,7 +27,7 @@ Default password - zabbix
 This info also caved to script folder in the zabbix-creds.txt file.
 
 ### Install-zabbix-agent-only
-Install only Zabbix-agent to endpoint. This scrit also can secure Zabbix agent with pre-shared key (PSK).
+Install only Zabbix-agent to endpoint. This script also can secure Zabbix agent with pre-shared key (PSK).
 
 ```bash
 ./install-zabbix-agent-only.sh <server_IP>
@@ -54,8 +54,8 @@ On new installed server:
 * Run update script
 
 ## Links
-https://www.zabbix.com/documentation/4.0/manual/installation/install_from_packages/rhel_centos
-https://www.zabbix.com/forum/zabbix-help/22576-copying-duplicating-zabbix-configuration
-https://www.zabbix.com/forum/zabbix-help/50603-export-configuration-to-a-new-installation
-https://zabbix.org/wiki/Docs/howto/upgrade/Upgrade_Zabbix_1.8_to_2.0_and_Migrate_Mysql_to_Postgresql
-http://bertvv.github.io/notes-to-self/2015/11/16/automating-mysql_secure_installation/
+* https://www.zabbix.com/documentation/4.0/manual/installation/install_from_packages/rhel_centos
+* https://www.zabbix.com/forum/zabbix-help/22576-copying-duplicating-zabbix-configuration
+* https://www.zabbix.com/forum/zabbix-help/50603-export-configuration-to-a-new-installation
+* https://zabbix.org/wiki/Docs/howto/upgrade/Upgrade_Zabbix_1.8_to_2.0_and_Migrate_Mysql_to_Postgresql
+* http://bertvv.github.io/notes-to-self/2015/11/16/automating-mysql_secure_installation/
