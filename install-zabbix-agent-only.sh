@@ -78,33 +78,35 @@ firewall-cmd --reload
 systemctl enable zabbix-agent && systemctl start zabbix-agent
 
 # PSK
+# TLSConnect=psk
+# TLSAccept=psk
+# TLSPSKIdentity=psk001
+# TLSPSKFile=/etc/zabbix/zabbix_agentd.psk
+# ---------------------------------------------------\
 echo -en "Secure agent? (y/n)? "
 read answer
 if echo "$answer" | grep -iq "^y" ;then
-	echo "Generate PSK..."
-	
-	TLSType="psk"
-	PSKFile="/etc/zabbix/zabbix_agentd.psk"
-	PSKIdentity=${$HOST_NAME%.*.*}-psk
-	
-	sh -c "openssl rand -hex 32 > $PSKFile"
+        echo "Generate PSK..."
 
-	sed -i "s/^\(TLSConnect=\).*/\1"$TLSType"/" /etc/zabbix/zabbix_agentd.conf
-	sed -i "s/^\(TLSAccept\).*/\1="$TLSType"/" /etc/zabbix/zabbix_agentd.conf
-	sed -i "s/^\(TLSPSKFile\).*/\1="$PSKFile"/" /etc/zabbix/zabbix_agentd.conf
-	sed -i "s/^\(TLSPSKIdentity\).*/\1="$PSKIdentity"/" /etc/zabbix/zabbix_agentd.conf
+        TLSType="psk"
+        PSKIdentity=${HOST_NAME%.*.*}
 
-	systemctl restart zabbix-agent
+        sh -c "openssl rand -hex 32 > /etc/zabbix/zabbix_agentd.psk"
 
-	echo -e "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
-	echo -e "PSKIdentity - $PSKIdentity"
+		sed -i 's/# TLSConnect=.*/TLSConnect=psk/' /etc/zabbix/zabbix_agentd.conf
+		sed -i 's/# TLSAccept=.*/TLSAccept=psk/' /etc/zabbix/zabbix_agentd.conf
+		sed -i 's/# TLSPSKFile=.*/TLSPSKFile=\/etc\/zabbix\/zabbix_agentd.psk/' /etc/zabbix/zabbix_agentd.conf
+		sed -i "s/# TLSPSKIdentity=.*/TLSPSKIdentity="$HOST_NAME"/" /etc/zabbix/zabbix_agentd.conf
+
+        systemctl restart zabbix-agent
+
+        echo -e "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
+        echo -e "PSKIdentity - $PSKIdentity"
 
 
 else
-	echo -e "Ok, you agent is will be insecure..."
+    	echo -e "Ok, you agent is will be insecure..."
 fi
-
-
 
 # Final
 # ---------------------------------------------------\
