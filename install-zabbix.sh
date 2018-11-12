@@ -152,4 +152,4 @@ systemctl enable zabbix-agent && systemctl start zabbix-agent
 echo -e "\nNow you can install and configure Zabbix!\n\nLink to Zabbix server - http://$SERVER_IP/zabbix\nDB Password - $DB_ZAB_PASS\nDefault login - Admin\nDefault password - zabbix\n"
 echo -e "\nMariaDB root password - $DB_ROOT_PASS\n"
 echo -e "Zabbix:\nDBUser: zabbix\nDBPass: $DB_ZAB_PASS\nLink to Zabbix server - http://$SERVER_IP/zabbix\n\nMariaDB\nROOTPass: $DB_ROOT_PASS" > $SCRIPT_PATH/zabbix-creds.txt
-echo -e "\nCredential data saved to - $SCRIPT_PATH\zabbix-creds.txt"
+echo -e "\nCredential data saved to - $SCRIPT_PATH/zabbix-creds.txt"
