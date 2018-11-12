@@ -59,3 +59,4 @@ On new installed server:
 * https://www.zabbix.com/forum/zabbix-help/50603-export-configuration-to-a-new-installation
 * https://zabbix.org/wiki/Docs/howto/upgrade/Upgrade_Zabbix_1.8_to_2.0_and_Migrate_Mysql_to_Postgresql
 * http://bertvv.github.io/notes-to-self/2015/11/16/automating-mysql_secure_installation/
+* https://www.zabbix.com/documentation/3.0/manual/encryption/using_pre_shared_keys
