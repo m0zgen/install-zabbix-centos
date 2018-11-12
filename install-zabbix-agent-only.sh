@@ -42,6 +42,11 @@ SERVER_IP=$1
 HOST_NAME=$(hostname)
 HOST_IP=$(hostname -I | cut -d' ' -f1)
 
+# Secure agent
+PSKIdentity=${HOST_NAME%.*.*}
+TLSType="psk"
+RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
+
 if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
 	echo "Zabbix agent already installed!"
 	exit 1
@@ -86,27 +91,25 @@ systemctl enable zabbix-agent && systemctl start zabbix-agent
 echo -en "Secure agent? (y/n)? "
 read answer
 if echo "$answer" | grep -iq "^y" ;then
-        echo "Generate PSK..."
+    echo "Generate PSK..."
 
-        TLSType="psk"
-        PSKIdentity=${HOST_NAME%.*.*}
+    sh -c "openssl rand -hex 32 > /etc/zabbix/zabbix_agentd.psk"
 
-        sh -c "openssl rand -hex 32 > /etc/zabbix/zabbix_agentd.psk"
+    sed -i 's/# TLSConnect=.*/TLSConnect=psk/' /etc/zabbix/zabbix_agentd.conf
+    sed -i 's/# TLSAccept=.*/TLSAccept=psk/' /etc/zabbix/zabbix_agentd.conf
+    sed -i 's/# TLSPSKFile=.*/TLSPSKFile=\/etc\/zabbix\/zabbix_agentd.psk/' /etc/zabbix/zabbix_agentd.conf
+    sed -i "s/# TLSPSKIdentity=.*/TLSPSKIdentity="$PSKIdentity$RAND_PREFIX"/" /etc/zabbix/zabbix_agentd.conf
 
-		sed -i 's/# TLSConnect=.*/TLSConnect=psk/' /etc/zabbix/zabbix_agentd.conf
-		sed -i 's/# TLSAccept=.*/TLSAccept=psk/' /etc/zabbix/zabbix_agentd.conf
-		sed -i 's/# TLSPSKFile=.*/TLSPSKFile=\/etc\/zabbix\/zabbix_agentd.psk/' /etc/zabbix/zabbix_agentd.conf
-		sed -i "s/# TLSPSKIdentity=.*/TLSPSKIdentity="$HOST_NAME"/" /etc/zabbix/zabbix_agentd.conf
+    systemctl restart zabbix-agent
 
-        systemctl restart zabbix-agent
-
-        Info "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
-        Info "PSKIdentity - $PSKIdentity"
-
+    Info "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
+    Info "PSKIdentity - $PSKIdentity$RAND_PREFIX"
 
 else
-    	echo -e "Ok, you agent is will be insecure..."
+      echo -e "Ok, you agent is will be insecure..."
 fi
+
+
 
 # Final
 # ---------------------------------------------------\
