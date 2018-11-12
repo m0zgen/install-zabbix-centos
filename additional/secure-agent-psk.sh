@@ -5,6 +5,8 @@
 # Envs
 # ---------------------------------------------------\
 HOST_NAME=$(hostname)
+TLSType="psk"
+RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
 
 Info() {
   printf "\033[1;32m$@\033[0m\n"
@@ -17,7 +19,6 @@ read answer
 if echo "$answer" | grep -iq "^y" ;then
     echo "Generate PSK..."
 
-    TLSType="psk"
     PSKIdentity=${HOST_NAME%.*.*}
 
     sh -c "openssl rand -hex 32 > /etc/zabbix/zabbix_agentd.psk"
@@ -25,12 +26,12 @@ if echo "$answer" | grep -iq "^y" ;then
     sed -i 's/# TLSConnect=.*/TLSConnect=psk/' /etc/zabbix/zabbix_agentd.conf
     sed -i 's/# TLSAccept=.*/TLSAccept=psk/' /etc/zabbix/zabbix_agentd.conf
     sed -i 's/# TLSPSKFile=.*/TLSPSKFile=\/etc\/zabbix\/zabbix_agentd.psk/' /etc/zabbix/zabbix_agentd.conf
-    sed -i "s/# TLSPSKIdentity=.*/TLSPSKIdentity="$HOST_NAME"/" /etc/zabbix/zabbix_agentd.conf
+    sed -i "s/# TLSPSKIdentity=.*/TLSPSKIdentity="$HOST_NAME$RAND_PREFIX"/" /etc/zabbix/zabbix_agentd.conf
 
     systemctl restart zabbix-agent
 
     Info "PSK - $(cat /etc/zabbix/zabbix_agentd.psk)"
-    Info "PSKIdentity - $PSKIdentity"
+    Info "PSKIdentity - $PSKIdentity$RAND_PREFIX"
 
 else
       echo -e "Ok, you agent is will be insecure..."
