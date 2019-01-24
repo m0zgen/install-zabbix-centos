@@ -7,7 +7,7 @@
 HOST_NAME=$(hostname)
 PSKIdentity=${HOST_NAME%.*.*}
 TLSType="psk"
-RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)"
+RAND_PREFIX="-$TLSType-prefix-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 12 | head -n 1)"
 
 Info() {
   printf "\033[1;32m$@\033[0m\n"
