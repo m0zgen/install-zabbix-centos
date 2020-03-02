@@ -23,22 +23,26 @@ confirm() {
 
 function isServer()
 {
-	if [[ -f /etc/zabbix/zabbix_server.conf ]]; then
-		_isServer=1
-	fi
+    if [[ -f /etc/zabbix/zabbix_server.conf ]]; then
+        _isServer=1
+    else
+        _isServer=0
+    fi
 }
 
 function isAgent()
 {
-	if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
-		_isAgent=1
-	fi
+    if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
+        _isAgent=1
+    else
+        _isAgent=0
+    fi
 }
 
 function setChoise()
 {
-	echo -e "What do you want install?\n"
-	echo "   1) Agent"
+    echo -e "What do you want install?\n"
+    echo "   1) Agent"
     echo "   2) Server"
     echo "   3) Exit"
     read -p "Install [1-3]: " -e -i 3 INSTALL_CHOICE
@@ -57,32 +61,31 @@ function setChoise()
     esac
 
     if [[ "$_installAgent" == 1 ]]; then
-    	if confirm "Install Zabbix Agent?"; then
-    		if [[ "$_isAgent" == "" ]]; then
+        if confirm "Install Zabbix Agent?"; then
+            if [[ "$_isAgent" == 0 ]]; then
 
                 read -p 'Zabbix server ip: ' zabbsrvip
 
-				$SCRIPT_PATH/modules/agent.sh $zabbsrvip
-			else
-				echo "Zabbix Agent already installed!"
-				exit 1
-			fi
-    	fi
+                $SCRIPT_PATH/modules/agent.sh $zabbsrvip
+            else
+                echo "Zabbix Agent already installed!"
+                exit 1
+            fi
+        fi
     fi
 
-    if [[ "$_installServer" == 1 ]]; then
-    	if confirm "Install Zabbix Server?"; then
-    		if [[ "$_isServer" == "" ]]; then
-				$SCRIPT_PATH/modules/server.sh
-			else
-				echo "Zabbix Server already installed!"
-				exit 1
-			fi
-    		
-    	fi
+    if [[ "$_installServer" == 0 ]]; then
+        if confirm "Install Zabbix Server?"; then
+            if [[ "$_isServer" == "" ]]; then
+                $SCRIPT_PATH/modules/server.sh
+            else
+                echo "Zabbix Server already installed!"
+                exit 1
+            fi
+            
+        fi
     fi
 
 }
 
 setChoise
-
