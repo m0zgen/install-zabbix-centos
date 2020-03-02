@@ -24,6 +24,7 @@ confirm() {
 
 _conf() {
 	cp $SCRIPT_PATH/active_sessions.conf /etc/zabbix/zabbix_agentd.d/
+	systemctl restart zabbix-agent
 }
 
 
