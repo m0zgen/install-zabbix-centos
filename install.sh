@@ -33,6 +33,7 @@ function setChoise()
     echo "   1) Agent"
     echo "   2) Server"
     echo "   3) Exit"
+    echo ""
     read -p "Install [1-3]: " -e -i 3 INSTALL_CHOICE
 
     case $INSTALL_CHOICE in
@@ -49,7 +50,7 @@ function setChoise()
     esac
 
     if [[ "$_installAgent" == 1 ]]; then
-        if confirm "Install Zabbix Agent?"; then
+        if confirm "Install Zabbix Agent (y/n)?"; then
 
             if [ -f $_agent ]; then
                 echo "Zabbix Agent already installed!"
@@ -63,7 +64,7 @@ function setChoise()
     fi
 
     if [[ "$_installServer" == 1 ]]; then
-        if confirm "Install Zabbix Server?"; then
+        if confirm "Install Zabbix Server (y/n)?"; then
             
             if [ -f $_server ]; then
                 echo "Zabbix Server already installed!"
