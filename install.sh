@@ -59,7 +59,10 @@ function setChoise()
     if [[ "$_installAgent" == 1 ]]; then
     	if confirm "Install Zabbix Agent?"; then
     		if [[ "$_isAgent" == "" ]]; then
-				$SCRIPT_PATH/modules/agent.sh
+
+                read -p 'Zabbix server ip: ' zabbsrvip
+
+				$SCRIPT_PATH/modules/agent.sh $zabbsrvip
 			else
 				echo "Zabbix Agent already installed!"
 				exit 1
