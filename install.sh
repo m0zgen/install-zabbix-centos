@@ -27,6 +27,11 @@ confirm() {
     esac
 }
 
+_exit() { 
+    echo "Bye bye!"
+    exit 0
+}
+
 function setChoise()
 {
     echo -e "What do you want install?\n"
@@ -44,8 +49,7 @@ function setChoise()
         _installServer=1
         ;;
         3)
-        echo "Bye bye!"
-        exit 0
+        _exit
         ;;
     esac
 
@@ -54,7 +58,7 @@ function setChoise()
 
             if [ -f $_agent ]; then
                 echo "Zabbix Agent already installed!"
-                exit 1
+                _exit
             else
                 read -p 'Zabbix server ip: ' zabbsrvip
                 $SCRIPT_PATH/modules/agent.sh $zabbsrvip
@@ -68,7 +72,7 @@ function setChoise()
             
             if [ -f $_server ]; then
                 echo "Zabbix Server already installed!"
-                exit 1
+                _exit
             else
                 $SCRIPT_PATH/modules/server.sh
             fi
