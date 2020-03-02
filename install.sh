@@ -8,6 +8,12 @@
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 
+# POSIX / Reset in case getopts has been used previously in the shell.
+OPTIND=1
+
+_agent="/etc/zabbix/zabbix_agentd.conf"
+_server="/etc/zabbix/zabbix_server.conf"
+
 confirm() {
     # call with a prompt string or use a default
     read -r -p "${1:-Are you sure? [y/N]} " response
@@ -19,24 +25,6 @@ confirm() {
             false
             ;;
     esac
-}
-
-function isServer()
-{
-    if [[ -f /etc/zabbix/zabbix_server.conf ]]; then
-        _isServer=1
-    else
-        _isServer=0
-    fi
-}
-
-function isAgent()
-{
-    if [[ -f /etc/zabbix/zabbix_agentd.conf ]]; then
-        _isAgent=1
-    else
-        _isAgent=0
-    fi
 }
 
 function setChoise()
@@ -62,23 +50,26 @@ function setChoise()
 
     if [[ "$_installAgent" == 1 ]]; then
         if confirm "Install Zabbix Agent?"; then
-            if [[ "$_isAgent" == 0 ]]; then
-                read -p 'Zabbix server ip: ' zabbsrvip
-                $SCRIPT_PATH/modules/agent.sh $zabbsrvip
-            else
+
+            if [ -f $_agent ]; then
                 echo "Zabbix Agent already installed!"
                 exit 1
+            else
+                read -p 'Zabbix server ip: ' zabbsrvip
+                $SCRIPT_PATH/modules/agent.sh $zabbsrvip
             fi
+
         fi
     fi
 
     if [[ "$_installServer" == 1 ]]; then
         if confirm "Install Zabbix Server?"; then
-            if [[ "$_isServer" == 0 ]]; then
-                $SCRIPT_PATH/modules/server.sh
-            else
+            
+            if [ -f $_server ]; then
                 echo "Zabbix Server already installed!"
                 exit 1
+            else
+                $SCRIPT_PATH/modules/server.sh
             fi
             
         fi
