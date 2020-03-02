@@ -72,7 +72,7 @@ function setChoise()
         fi
     fi
 
-    if [[ "$_installServer" == 0 ]]; then
+    if [[ "$_installServer" == 1 ]]; then
         if confirm "Install Zabbix Server?"; then
             if [[ "$_isServer" == 0 ]]; then
                 $SCRIPT_PATH/modules/server.sh
