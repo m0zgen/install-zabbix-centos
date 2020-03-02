@@ -1,6 +1,7 @@
 #!/bin/bash
 # Created by Yevgeniy Goncharov, https://sys-adm.in
 # Install Zabbix to CentOS
+# Thx for template - https://serveradmin.ru/monitoring-ssh-loginov-v-zabbix/
 
 # Envs
 # ---------------------------------------------------\
