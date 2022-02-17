@@ -34,7 +34,26 @@ isRoot() {
 	fi
 }
 
+# Checks supporting distros
+checkDistro() {
+    # Checking distro
+    if [ -e /etc/centos-release ]; then
+        DISTRO=`cat /etc/redhat-release | awk '{print $1,$4}'`
+        RPM=1
+    elif [ -e /etc/fedora-release ]; then
+        DISTRO=`cat /etc/fedora-release | awk '{print ($1,$3~/^[0-9]/?$3:$4)}'`
+        RPM=2
+    elif [ -e /etc/os-release ]; then
+        DISTRO=`lsb_release -d | awk -F"\t" '{print $2}'`
+        RPM=0
+    else
+        Error "Your distribution is not supported (yet)"
+        exit 1
+    fi
+}
+
 isRoot
+checkDistro
 
 # Vars
 # ---------------------------------------------------\
@@ -62,10 +81,24 @@ fi
 # Installation
 # ---------------------------------------------------\
 
-yum install epel-release -y
-rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+centos() {
+    yum install epel-release -y
+    rpm -ivh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+    yum install zabbix-agent -y
+}
 
-yum install zabbix-agent -y
+fedora() {
+    dnf install zabbix-agent -y
+}
+
+if [[ "$RPM" -eq "1" ]]; then
+    centos
+elif [[ "$RPM" -eq "2" ]]; then
+    fedora
+else
+    echo "Unknown distro. Exit."
+    exit 1
+fi
 
 # Configure local zabbix agent
 sed -i "s/^\(Server=\).*/\1"$SERVER_IP"/" /etc/zabbix/zabbix_agentd.conf
